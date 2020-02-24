@@ -1,5 +1,5 @@
 ---
-title: "Building Management <br> Reports using the <br> flexdashboard package"
+title: "Building Management <br> Reports using flexdashboard"
 subtitle: "PHI useR Group"
 author: 'Alice Byers <br> Information Services Division <br>'
 date: "25 February 2020 <br><br> Slides: https://github.com/alicebyers5/useR-presentation"
@@ -31,7 +31,7 @@ knitr::knit_hooks$set(error = function(x, options) {
 
 - Quarterly management reports for [Dementia Post Diagnostic Support (PDS)](https://www.isdscotland.org/Health-Topics/Mental-Health/Dementia-Post-diagnostic-Support/) data
 
-- SPSS used for data preparation and calculating measures
+- SPSS used for data preparation and calculating performance measures
 
 - Excel used to present data
 
@@ -40,44 +40,86 @@ knitr::knit_hooks$set(error = function(x, options) {
 
 ## Why flexdashboard?
 
-- Uses R Markdown to produce interactive dashboards
+- Process can be automated using R and R Markdown
 
-- Output as standalone html file
-    - Restricted access by sending via email
+- Output can include interactive elements
+
+- Output as a stand alone html file
+
     - Universal file format
     - No requirement for password protected shiny server
+    - Can continue to be distributed via email to restrict access
 
-- The production process can be automated using R
-
-- Looks good!
-
-
-## Using subpages to avoid duplication of code
-
-Requirement for seperate page/view for each Health Board and Financial Year. Wanted to avoid writing the same code multiple times to produce the same output for each combination of HB/FY. 
-
-Account for some differences; e.g. some Health Boards only have one Integration Joint Board (IJB) within them and so don't require this breakdown on their referrals chart. For more recent financial years where data is still incomplete, performance figures are not presented.
+- Looks swish!
 
 
-## Using subpages to avoid duplication of code
+## Using flexdashboard
 
-Text
+Define output as flexdashboard in YAML header of R Markdown document:
 
-```{r, message = FALSE}
-library(testthat)
-
-expect_equal(2 + 3, 5)
-expect_error(sum(1, "two"))
-```
-
-Text
-
-```{r, error = TRUE}
-expect_lt(3, 2)
+```{r eval = FALSE}
+---
+title: "Dementia PDS Quarterly Management Report"
+output: 
+  flexdashboard::flex_dashboard:
+    navbar:
+      - title: "Data as at 31 December 2019"
+    logo: isdscotland.png
+    orientation: rows
+    vertical_layout: scroll
+---
 ```
 
 
-## Using `ggplotly` for interactive charts
+## Using flexdashboard
+
+Add a new row...
+
+```{r eval = FALSE}
+Row
+-------------------------------------------------
+```
+
+Add multiple pages...
+
+```{r eval = FALSE}
+Home
+=================================================
+```
+
+Create a tabset to switch between sections...
+  
+```{r eval = FALSE}
+Row {.tabset}
+-------------------------------------------------
+```
+
+
+## Using flexdashboard
+
+```{r eval = FALSE}
+flexdashboard::valueBox(paste0(80, "%"), 
+                        icon = "fa-percent",
+                        caption = paste("of people estimated to be newly",
+                                        " diagnosed with dementia were referred",
+                                        " for post-diagnostic support.")
+)
+```
+
+```{r echo = FALSE, fig.align = 'center'}
+include_graphics(here::here("images", "valuebox.png"))
+```
+
+
+## R Markdown Child Templates
+
+- Used to create multiple pages with the same layout for each financial year and health board, thus avoiding duplication of code
+
+- Write separate R Markdown document called a "child" template
+
+- Use `knitr::knit_child()` in the main markdown document to knit the "child" template for each combination of parameters
+
+- [Tutorial to use R Markdown Childs with flexdashboard](https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/)
 
 
 ## Next Steps
@@ -102,7 +144,7 @@ expect_lt(3, 2)
 
 ### Useful Links
 
-- [`flexdashboard`](https://rmarkdown.rstudio.com/flexdashboard/index.html)
+- [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/index.html)
 
-- [Tutorial to use subpages](https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/)
+- [Tutorial to use R Markdown Childs with flexdashboard](https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/)
 

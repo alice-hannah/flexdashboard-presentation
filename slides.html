@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Building Management   Reports using the   flexdashboard package</title>
+  <title>Building Management   Reports using flexdashboard</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -19,7 +19,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Building Management <br> Reports using the <br> flexdashboard package',
+                title: 'Building Management <br> Reports using flexdashboard',
                         subtitle: 'PHI useR Group',
                 useBuilds: true,
         usePrettify: true,
@@ -110,7 +110,7 @@ slide:not(.current) .plotly.html-widget{
 
 <ul>
 <li><p>Quarterly management reports for <a href='https://www.isdscotland.org/Health-Topics/Mental-Health/Dementia-Post-diagnostic-Support/' title=''>Dementia Post Diagnostic Support (PDS)</a> data</p></li>
-<li><p>SPSS used for data preparation and calculating measures</p></li>
+<li><p>SPSS used for data preparation and calculating performance measures</p></li>
 <li><p>Excel used to present data</p></li>
 <li><p>New data recording guidance prompted review of methodology and presentation of management reports</p></li>
 </ul>
@@ -118,40 +118,69 @@ slide:not(.current) .plotly.html-widget{
 </article></slide><slide class=""><hgroup><h2>Why flexdashboard?</h2></hgroup><article  id="why-flexdashboard">
 
 <ul>
-<li><p>Uses R Markdown to produce interactive dashboards</p></li>
-<li>Output as standalone html file
+<li><p>Process can be automated using R and R Markdown</p></li>
+<li><p>Output can include interactive elements</p></li>
+<li><p>Output as a stand alone html file</p>
 
 <ul>
-<li>Restricted access by sending via email</li>
 <li>Universal file format</li>
 <li>No requirement for password protected shiny server</li>
+<li>Can continue to be distributed via email to restrict access</li>
 </ul></li>
-<li><p>The production process can be automated using R</p></li>
-<li><p>Looks good!</p></li>
+<li><p>Looks swish!</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Using subpages to avoid duplication of code</h2></hgroup><article  id="using-subpages-to-avoid-duplication-of-code">
+</article></slide><slide class=""><hgroup><h2>Using flexdashboard</h2></hgroup><article  id="using-flexdashboard">
 
-<p>Requirement for seperate page/view for each Health Board and Financial Year. Wanted to avoid writing the same code multiple times to produce the same output for each combination of HB/FY.</p>
+<p>Define output as flexdashboard in YAML header of R Markdown document:</p>
 
-<p>Account for some differences; e.g. some Health Boards only have one Integration Joint Board (IJB) within them and so don&#39;t require this breakdown on their referrals chart. For more recent financial years where data is still incomplete, performance figures are not presented.</p>
+<pre class = 'prettyprint lang-r'>---
+title: &quot;Dementia PDS Quarterly Management Report&quot;
+output: 
+  flexdashboard::flex_dashboard:
+    navbar:
+      - title: &quot;Data as at 31 December 2019&quot;
+    logo: isdscotland.png
+    orientation: rows
+    vertical_layout: scroll
+---</pre>
 
-</article></slide><slide class=""><hgroup><h2>Using subpages to avoid duplication of code</h2></hgroup><article  id="using-subpages-to-avoid-duplication-of-code-1">
+</article></slide><slide class=""><hgroup><h2>Using flexdashboard</h2></hgroup><article  id="using-flexdashboard-1">
 
-<p>Text</p>
+<p>Add a new row&#8230;</p>
 
-<pre class = 'prettyprint lang-r'>library(testthat)
+<pre class = 'prettyprint lang-r'>Row
+-------------------------------------------------</pre>
 
-expect_equal(2 + 3, 5)
-expect_error(sum(1, &quot;two&quot;))</pre>
+<p>Add multiple pages&#8230;</p>
 
-<p>Text</p>
+<pre class = 'prettyprint lang-r'>Home
+=================================================</pre>
 
-<pre class = 'prettyprint lang-r'>expect_lt(3, 2)</pre>
+<p>Create a tabset to switch between sections&#8230;</p>
 
-<pre >## Error: 3 is not strictly less than 2. Difference: 1</pre>
+<pre class = 'prettyprint lang-r'>Row {.tabset}
+-------------------------------------------------</pre>
 
-</article></slide><slide class=""><hgroup><h2>Using <code>ggplotly</code> for interactive charts</h2></hgroup><article  id="using-ggplotly-for-interactive-charts">
+</article></slide><slide class=""><hgroup><h2>Using flexdashboard</h2></hgroup><article  id="using-flexdashboard-2">
+
+<pre class = 'prettyprint lang-r'>flexdashboard::valueBox(paste0(80, &quot;%&quot;), 
+                        icon = &quot;fa-percent&quot;,
+                        caption = paste(&quot;of people estimated to be newly&quot;,
+                                        &quot; diagnosed with dementia were referred&quot;,
+                                        &quot; for post-diagnostic support.&quot;)
+)</pre>
+
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>R Markdown Child Templates</h2></hgroup><article  id="r-markdown-child-templates">
+
+<ul>
+<li><p>Used to create multiple pages with the same layout for each financial year and health board, thus avoiding duplication of code</p></li>
+<li><p>Write separate R Markdown document called a &quot;child&quot; template</p></li>
+<li><p>Use <code>knitr::knit_child()</code> in the main markdown document to knit the &quot;child&quot; template for each combination of parameters</p></li>
+<li><p><a href='https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/' title=''>Tutorial to use R Markdown Childs with flexdashboard</a></p></li>
+</ul>
 
 </article></slide><slide class=""><hgroup><h2>Next Steps</h2></hgroup><article  id="next-steps">
 
@@ -174,8 +203,8 @@ expect_error(sum(1, &quot;two&quot;))</pre>
 <h3>Useful Links</h3>
 
 <ul>
-<li><p><a href='https://rmarkdown.rstudio.com/flexdashboard/index.html' title=''><code>flexdashboard</code></a></p></li>
-<li><p><a href='https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/' title=''>Tutorial to use subpages</a></p></li>
+<li><p><a href='https://rmarkdown.rstudio.com/flexdashboard/index.html' title=''>flexdashboard</a></p></li>
+<li><p><a href='https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/' title=''>Tutorial to use R Markdown Childs with flexdashboard</a></p></li>
 </ul></article></slide>
 
 
