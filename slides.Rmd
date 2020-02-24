@@ -1,0 +1,198 @@
+---
+title: "Unit testing in R using <br> the testthat package"
+subtitle: "Scottish Government R user day"
+author: 'Jack Hannah <br> Information Services Division <br>'
+date: "1 October 2019 <br><br> Slides: https://github.com/jackhannah95/unit-testing"
+output:
+  ioslides_presentation:
+    widescreen: true
+    css: my-theme.css
+---
+
+```{r setup, include = FALSE}
+# Load packages required
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+error_hook <- knitr::knit_hooks$get("error")
+knitr::knit_hooks$set(error = function(x, options) {
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  error_hook(x, options)
+})
+```
+
+
+## What is unit testing?
+
+- Unit testing involves testing code to ensure it does what it's supposed to do
+
+- It is an important concept in software development
+
+- In the context of R, unit testing normally involves testing whether the output of functions are as expected
+
+- If you've never heard of unit testing, but do write R functions, chances are you already do informal unit testing
+
+
+## Why do unit testing?
+
+```{r echo = FALSE, out.width = "75%", fig.align = 'center'}
+include_graphics(here::here("images", "pill-test.jpg"))
+```
+<center>
+
+Source: [Cathy Wilcox](https://twitter.com/cathywilcox1/status/1072957848462614528)
+
+</center>
+
+
+## Why do unit testing?
+
+- Provides evidence that your code works as intended - useful for anyone else who uses it, or yourself in future
+
+- If you find a bug in the code, unit tests are a way of checking that it has been resolved
+
+- If you make amendments to the code in future, re-running existing unit tests is a way of checking you haven't inadvertently broken anything that used to work
+
+- Forces you to break large, unwieldy sections of code up into smaller, more manageable functions
+
+
+## The testthat package
+
+- "_Testing should be something that you do all the time, but it’s normally painful and boring_" - [Hadley Wickham](https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf)
+
+- The [testthat](https://github.com/r-lib/testthat) package provides functions to automate unit testing
+
+- It's designed with package development in mind, but there's no reason it can't be used to test functions in standalone scripts
+
+```{r echo = FALSE, out.width = "25%", fig.align = 'center'}
+include_graphics(here::here("images", "testthat_logo.png"))
+```
+
+
+## The testthat package
+
+The most prominent functions in testthat are the `expect_` functions:
+
+```{r, message = FALSE}
+library(testthat)
+
+expect_equal(2 + 3, 5)
+expect_error(sum(1, "two"))
+```
+
+If these tests are run individually and pass, they return no output. They return an error message if they fail:
+
+```{r, error = TRUE}
+expect_lt(3, 2)
+```
+
+
+## A practical example
+
+Imagine you want to calculate the number of instances of a particular day in a set time period (motivation: the [HSMR publication](https://github.com/NHS-NSS-transforming-publications/hsmr) goes out on the third last Tuesday of the month, every three months). You could do it 'manually' every time:
+
+```{r, message = FALSE}
+library(lubridate)
+
+# Number of Tuesdays in January 2018
+sum(format(seq(dmy(01012018), dmy(31012018), by = "day"), "%w") == 2)
+
+# Number of Thursdays in 2020
+sum(format(seq(dmy(01012020), dmy(31122020), by = "day"), "%w") == 4)
+```
+
+
+## A practical example
+
+If you have to do this lots of times, for different time periods, it's easier, safer and all-round better to write a function:
+
+```{r}
+n_day <- function(start, end, n) {
+  
+  if (any(class(c(start, end)) != "Date")) {
+    stop("The start and end dates must be in date format")
+  }
+  
+  # Note that Sunday is considered to be day 0; not day 7
+  if (!n %in% 0:6) {
+    stop("The day of the week must be a number between 0 and 6")
+  }
+  
+  sum(format(seq(start, end, by = "day"), "%w") == n)
+}
+```
+
+
+## A practical example
+
+You can then call that function:
+
+```{r}
+# Number of Tuesdays in January 2018
+n_day(dmy(01012018), dmy(31012018), 2)
+
+# Number of Thursdays in 2020
+n_day(dmy(01012020), dmy(31122020), 4)
+```
+
+
+## A practical example
+
+You might do some informal checks that the function works as expected:
+
+```{r, error = TRUE, linewidth = 90}
+# Check that n_day errors if not supplied with a valid n
+n_day(dmy(01012020), dmy(31122020), 7)
+
+# Check that n_day produces at least 52 instances of every day in 2020
+unlist(purrr::map(0:6, ~ n_day(dmy(01012020), dmy(31122020), .x)))
+```
+
+
+## A practical example
+
+But writing formal, automated tests is better:
+
+```{r}
+test_that("Errors if supplied with input of incorrect class", {
+  expect_error(n_day(dmy(01012020), dmy(31122020), 7))
+})
+
+test_that("Produces at least 52 instances of every day in 2020", {
+  instances <- unlist(purrr::map(0:6, ~ n_day(dmy(01012020), dmy(31122020), .x)))
+  
+  expect_true(all(instances >= 52))
+})
+```
+
+
+## A practical example
+
+```{r}
+test_file(here::here("code", "03_test-n_day.R"))
+```
+
+
+## Contact
+
+### Jack Hannah
+
+[Email](mailto:jack.hannah1@nhs.net)
+[GitHub](https://github.com/jackhannah95)
+
+### Transforming Publishing Programme
+
+[Email](mailto:nss.isdtransformingpublishing@nhs.net)
+[GitHub](https://github.com/NHS-NSS-transforming-publications)
+[Website](https://www.isdscotland.org/Products-and-Services/Transforming-Publishing-Programme/)
+
+### ISD
+
+[Email](mailto:NSS.isdSHIS@nhs.net)
+[GitHub](https://github.com/Health-SocialCare-Scotland)
+[Website](https://www.isdscotland.org/)

@@ -1,0 +1,7 @@
+/* adds NHS logo in top right of all slides */
+slides > slide {
+  background: white;
+  background-image: url("images/nhs_logo.png") !important;
+  background-repeat: no-repeat;
+  background-position: left 100% top 2%;
+}
