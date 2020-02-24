@@ -106,167 +106,53 @@ slide:not(.current) .plotly.html-widget{
           </hgroup>
   </slide>
 
-<slide class=""><hgroup><h2>What is unit testing?</h2></hgroup><article  id="what-is-unit-testing">
+<slide class=""><hgroup><h2>Background and Motivation</h2></hgroup><article  id="background-and-motivation">
 
 <ul>
-<li><p>Unit testing involves testing code to ensure it does what it&#39;s supposed to do</p></li>
-<li><p>It is an important concept in software development</p></li>
-<li><p>In the context of R, unit testing normally involves testing whether the output of functions are as expected</p></li>
-<li><p>If you&#39;ve never heard of unit testing, but do write R functions, chances are you already do informal unit testing</p></li>
+<li><p>Quarterly management reports for <a href='https://www.isdscotland.org/Health-Topics/Mental-Health/Dementia-Post-diagnostic-Support/' title=''>Dementia Post Diagnostic Support (PDS)</a> data</p></li>
+<li><p>SPSS used for data preparation and calculating measures</p></li>
+<li><p>Excel used to present data</p></li>
+<li><p>New data recording guidance prompted review of methodology and presentation of management reports</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Why do unit testing?</h2></hgroup><article  id="why-do-unit-testing">
-
-<img src="/conf/dementia/A&I/useR-presentation/images/pill-test.jpg" width="75%" style="display: block; margin: auto;" />
-
-<center>
-
-<p>Source: <a href='https://twitter.com/cathywilcox1/status/1072957848462614528' title=''>Cathy Wilcox</a></p>
-
-</center>
-
-</article></slide><slide class=""><hgroup><h2>Why do unit testing?</h2></hgroup><article  id="why-do-unit-testing-1">
+</article></slide><slide class=""><hgroup><h2>Requirements</h2></hgroup><article  id="requirements">
 
 <ul>
-<li><p>Provides evidence that your code works as intended - useful for anyone else who uses it, or yourself in future</p></li>
-<li><p>If you find a bug in the code, unit tests are a way of checking that it has been resolved</p></li>
-<li><p>If you make amendments to the code in future, re-running existing unit tests is a way of checking you haven&#39;t inadvertently broken anything that used to work</p></li>
-<li><p>Forces you to break large, unwieldy sections of code up into smaller, more manageable functions</p></li>
+<li><p>Restricted access</p></li>
+<li><p>Universal file format</p></li>
+<li><p>User friendly format</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>The testthat package</h2></hgroup><article  id="the-testthat-package">
+</article></slide><slide class=""><hgroup><h2>Why flexdashboard?</h2></hgroup><article  id="why-flexdashboard">
 
 <ul>
-<li><p>&quot;<em>Testing should be something that you do all the time, but it’s normally painful and boring</em>&quot; - <a href='https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf' title=''>Hadley Wickham</a></p></li>
-<li><p>The <a href='https://github.com/r-lib/testthat' title=''>testthat</a> package provides functions to automate unit testing</p></li>
-<li><p>It&#39;s designed with package development in mind, but there&#39;s no reason it can&#39;t be used to test functions in standalone scripts</p></li>
+<li><p>Uses R Markdown to produce interactive dashboards</p></li>
+<li><p>No requirement for shiny server; can be produced as standalone html file</p></li>
+<li><p>The production process can be automated using R</p></li>
 </ul>
 
-<p><img src="/conf/dementia/A&I/useR-presentation/images/testthat_logo.png" width="25%" style="display: block; margin: auto;" /></p>
+</article></slide><slide class=""><hgroup><h2>Some code</h2></hgroup><article  id="some-code">
 
-</article></slide><slide class=""><hgroup><h2>The testthat package</h2></hgroup><article  id="the-testthat-package-1">
-
-<p>The most prominent functions in testthat are the <code>expect_</code> functions:</p>
+<p>Text</p>
 
 <pre class = 'prettyprint lang-r'>library(testthat)
 
 expect_equal(2 + 3, 5)
 expect_error(sum(1, &quot;two&quot;))</pre>
 
-<p>If these tests are run individually and pass, they return no output. They return an error message if they fail:</p>
+<p>Text</p>
 
 <pre class = 'prettyprint lang-r'>expect_lt(3, 2)</pre>
 
 <pre >## Error: 3 is not strictly less than 2. Difference: 1</pre>
 
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example">
-
-<p>Imagine you want to calculate the number of instances of a particular day in a set time period (motivation: the <a href='https://github.com/NHS-NSS-transforming-publications/hsmr' title=''>HSMR publication</a> goes out on the third last Tuesday of the month, every three months). You could do it &#39;manually&#39; every time:</p>
-
-<pre class = 'prettyprint lang-r'>library(lubridate)
-
-# Number of Tuesdays in January 2018
-sum(format(seq(dmy(01012018), dmy(31012018), by = &quot;day&quot;), &quot;%w&quot;) == 2)</pre>
-
-<pre >## [1] 5</pre>
-
-<pre class = 'prettyprint lang-r'># Number of Thursdays in 2020
-sum(format(seq(dmy(01012020), dmy(31122020), by = &quot;day&quot;), &quot;%w&quot;) == 4)</pre>
-
-<pre >## [1] 53</pre>
-
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example-1">
-
-<p>If you have to do this lots of times, for different time periods, it&#39;s easier, safer and all-round better to write a function:</p>
-
-<pre class = 'prettyprint lang-r'>n_day &lt;- function(start, end, n) {
-  
-  if (any(class(c(start, end)) != &quot;Date&quot;)) {
-    stop(&quot;The start and end dates must be in date format&quot;)
-  }
-  
-  # Note that Sunday is considered to be day 0; not day 7
-  if (!n %in% 0:6) {
-    stop(&quot;The day of the week must be a number between 0 and 6&quot;)
-  }
-  
-  sum(format(seq(start, end, by = &quot;day&quot;), &quot;%w&quot;) == n)
-}</pre>
-
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example-2">
-
-<p>You can then call that function:</p>
-
-<pre class = 'prettyprint lang-r'># Number of Tuesdays in January 2018
-n_day(dmy(01012018), dmy(31012018), 2)</pre>
-
-<pre >## [1] 5</pre>
-
-<pre class = 'prettyprint lang-r'># Number of Thursdays in 2020
-n_day(dmy(01012020), dmy(31122020), 4)</pre>
-
-<pre >## [1] 53</pre>
-
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example-3">
-
-<p>You might do some informal checks that the function works as expected:</p>
-
-<pre class = 'prettyprint lang-r'># Check that n_day errors if not supplied with a valid n
-n_day(dmy(01012020), dmy(31122020), 7)</pre>
-
-<pre >## Error in n_day(dmy(1012020), dmy(31122020), 7): The day of the week must be a number
-between 0 and 6</pre>
-
-<pre class = 'prettyprint lang-r'># Check that n_day produces at least 52 instances of every day in 2020
-unlist(purrr::map(0:6, ~ n_day(dmy(01012020), dmy(31122020), .x)))</pre>
-
-<pre >## [1] 52 52 52 53 53 52 52</pre>
-
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example-4">
-
-<p>But writing formal, automated tests is better:</p>
-
-<pre class = 'prettyprint lang-r'>test_that(&quot;Errors if supplied with input of incorrect class&quot;, {
-  expect_error(n_day(dmy(01012020), dmy(31122020), 7))
-})
-
-test_that(&quot;Produces at least 52 instances of every day in 2020&quot;, {
-  instances &lt;- unlist(purrr::map(0:6, ~ n_day(dmy(01012020), dmy(31122020), .x)))
-  
-  expect_true(all(instances &gt;= 52))
-})</pre>
-
-</article></slide><slide class=""><hgroup><h2>A practical example</h2></hgroup><article  id="a-practical-example-5">
-
-<pre class = 'prettyprint lang-r'>test_file(here::here(&quot;code&quot;, &quot;03_test-n_day.R&quot;))</pre>
-
-<pre >## ✔ |  OK F W S | Context
-## 
-⠏ |   0       | 03_n_day
-⠦ |   7       | 03_n_day
-✔ |   7       | 03_n_day [0.1 s]
-## 
-## ══ Results ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-## Duration: 0.2 s
-## 
-## OK:       7
-## Failed:   0
-## Warnings: 0
-## Skipped:  0</pre>
-
 </article></slide><slide class=""><hgroup><h2>Contact</h2></hgroup><article  id="contact">
 
-<h3>Jack Hannah</h3>
+<h3>Alice Byers - Health &amp; Social Care Team</h3>
 
-<p><a href='mailto:jack.hannah1@nhs.net' title=''>Email</a> <a href='https://github.com/jackhannah95' title=''>GitHub</a></p>
+<p>Email - <a href='mailto:alice.byers@nhs.net' title=''>alice.byers@nhs.net</a></p>
 
-<h3>Transforming Publishing Programme</h3>
-
-<p><a href='mailto:nss.isdtransformingpublishing@nhs.net' title=''>Email</a> <a href='https://github.com/NHS-NSS-transforming-publications' title=''>GitHub</a> <a href='https://www.isdscotland.org/Products-and-Services/Transforming-Publishing-Programme/' title=''>Website</a></p>
-
-<h3>ISD</h3>
-
-<p><a href='mailto:NSS.isdSHIS@nhs.net' title=''>Email</a> <a href='https://github.com/Health-SocialCare-Scotland' title=''>GitHub</a> <a href='https://www.isdscotland.org/' title=''>Website</a></p></article></slide>
+<p>GitHub - <a href='https://github.com/alicebyers5' title=''>alicebyers5</a></p></article></slide>
 
 
   <slide class="backdrop"></slide>
