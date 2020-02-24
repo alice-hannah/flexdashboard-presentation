@@ -1,8 +1,8 @@
 ---
-title: "Unit testing in R using <br> the testthat package"
-subtitle: "Scottish Government R user day"
-author: 'Jack Hannah <br> Information Services Division <br>'
-date: "1 October 2019 <br><br> Slides: https://github.com/jackhannah95/unit-testing"
+title: "Building Management <br> Reports using the <br> flexdashboard package"
+subtitle: "PHI useR Group"
+author: 'Alice Byers <br> Information Services Division <br>'
+date: "25 February 2020 <br><br> Slides: https://github.com/alicebyers5/useR-presentation"
 output:
   ioslides_presentation:
     widescreen: true
