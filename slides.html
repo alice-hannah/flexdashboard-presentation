@@ -115,23 +115,28 @@ slide:not(.current) .plotly.html-widget{
 <li><p>New data recording guidance prompted review of methodology and presentation of management reports</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Requirements</h2></hgroup><article  id="requirements">
-
-<ul>
-<li><p>Restricted access</p></li>
-<li><p>Universal file format</p></li>
-<li><p>User friendly format</p></li>
-</ul>
-
 </article></slide><slide class=""><hgroup><h2>Why flexdashboard?</h2></hgroup><article  id="why-flexdashboard">
 
 <ul>
 <li><p>Uses R Markdown to produce interactive dashboards</p></li>
-<li><p>No requirement for shiny server; can be produced as standalone html file</p></li>
+<li>Output as standalone html file
+
+<ul>
+<li>Restricted access by sending via email</li>
+<li>Universal file format</li>
+<li>No requirement for password protected shiny server</li>
+</ul></li>
 <li><p>The production process can be automated using R</p></li>
+<li><p>Looks good!</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Some code</h2></hgroup><article  id="some-code">
+</article></slide><slide class=""><hgroup><h2>Using subpages to avoid duplication of code</h2></hgroup><article  id="using-subpages-to-avoid-duplication-of-code">
+
+<p>Requirement for seperate page/view for each Health Board and Financial Year. Wanted to avoid writing the same code multiple times to produce the same output for each combination of HB/FY.</p>
+
+<p>Account for some differences; e.g. some Health Boards only have one Integration Joint Board (IJB) within them and so don&#39;t require this breakdown on their referrals chart. For more recent financial years where data is still incomplete, performance figures are not presented.</p>
+
+</article></slide><slide class=""><hgroup><h2>Using subpages to avoid duplication of code</h2></hgroup><article  id="using-subpages-to-avoid-duplication-of-code-1">
 
 <p>Text</p>
 
@@ -146,13 +151,32 @@ expect_error(sum(1, &quot;two&quot;))</pre>
 
 <pre >## Error: 3 is not strictly less than 2. Difference: 1</pre>
 
-</article></slide><slide class=""><hgroup><h2>Contact</h2></hgroup><article  id="contact">
+</article></slide><slide class=""><hgroup><h2>Using <code>ggplotly</code> for interactive charts</h2></hgroup><article  id="using-ggplotly-for-interactive-charts">
+
+</article></slide><slide class=""><hgroup><h2>Next Steps</h2></hgroup><article  id="next-steps">
+
+<ul>
+<li><p>Automate date in navbar so dashboard is fully automated</p></li>
+<li><p>Improve comments/documentation of code</p></li>
+<li><p>Develop further data analysis</p></li>
+<li><p>Develop as shiny dashboard when infrastructure available</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Contact &amp; Links</h2></hgroup><article  id="contact-links">
 
 <h3>Alice Byers - Health &amp; Social Care Team</h3>
 
-<p>Email - <a href='mailto:alice.byers@nhs.net' title=''>alice.byers@nhs.net</a></p>
+<ul>
+<li><p>Email - <a href='mailto:alice.byers@nhs.net' title=''>alice.byers@nhs.net</a></p></li>
+<li><p>GitHub - <a href='https://github.com/alicebyers5' title=''>alicebyers5</a></p></li>
+</ul>
 
-<p>GitHub - <a href='https://github.com/alicebyers5' title=''>alicebyers5</a></p></article></slide>
+<h3>Useful Links</h3>
+
+<ul>
+<li><p><a href='https://rmarkdown.rstudio.com/flexdashboard/index.html' title=''><code>flexdashboard</code></a></p></li>
+<li><p><a href='https://somtom.github.io/post/using-dynamically-rendered-r-markdown-childs-for-reports/' title=''>Tutorial to use subpages</a></p></li>
+</ul></article></slide>
 
 
   <slide class="backdrop"></slide>
